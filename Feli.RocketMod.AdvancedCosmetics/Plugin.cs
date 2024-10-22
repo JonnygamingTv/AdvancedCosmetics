@@ -18,8 +18,7 @@ namespace Feli.RocketMod.AdvancedCosmetics
     {
         public static Plugin Instance { get; set; }
         public XMLFileAsset<PlayersCosmeticsStore> CosmeticsStore { get; set; }
-        System.Reflection.FieldInfo econInfoField = typeof(SDG.Provider.TempSteamworksEconomy).GetField("econInfo", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
-        public Dictionary<int, UnturnedEconInfo> EconInfos => econInfoField.GetValue(null) as Dictionary<int, UnturnedEconInfo>;
+        public Dictionary<int, UnturnedEconInfo> EconInfos;
         
         public override TranslationList DefaultTranslations => new TranslationList()
         {
@@ -39,6 +38,7 @@ namespace Feli.RocketMod.AdvancedCosmetics
             SaveManager.onPreSave += OnPreSave;
             Logger.Log($"Advanced Cosmetics v{Assembly.GetName().Version} has been loaded");
             Logger.Log("Do you want more cool plugins? Join now: https://discord.gg/4FF2548 !");
+            LoadEcon();
         }
 
         private void OnPreSave()
@@ -65,6 +65,46 @@ namespace Feli.RocketMod.AdvancedCosmetics
             UnturnedPermissions.OnJoinRequested -= OnJoinRequested;
             SaveManager.onPreSave -= OnPreSave;
             Logger.Log($"Advanced Cosmetics v{Assembly.GetName().Version} has been unloaded");
+        }
+        void LoadEcon()
+        {
+            string path = Path.Combine(UnturnedPaths.RootDirectory.FullName, "EconInfo.bin");
+            EconInfos = new Dictionary<int, UnturnedEconInfo>();
+            try
+            {
+                using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    using (SHA1Stream sha1Stream = new SHA1Stream(fileStream))
+                    {
+                        using (BinaryReader binaryReader = new BinaryReader(fileStream))
+                        {
+                            binaryReader.ReadInt32();
+                            int num = binaryReader.ReadInt32();
+                            for (int i = 0; i < num; i++)
+                            {
+                                UnturnedEconInfo unturnedEconInfo = new UnturnedEconInfo();
+                                unturnedEconInfo.name = binaryReader.ReadString();
+                                unturnedEconInfo.display_type = binaryReader.ReadString();
+                                unturnedEconInfo.description = binaryReader.ReadString();
+                                unturnedEconInfo.name_color = binaryReader.ReadString();
+                                unturnedEconInfo.itemdefid = binaryReader.ReadInt32();
+                                unturnedEconInfo.marketable = binaryReader.ReadBoolean();
+                                unturnedEconInfo.scraps = binaryReader.ReadInt32();
+                                unturnedEconInfo.target_game_asset_guid = new Guid(binaryReader.ReadBytes(16));
+                                unturnedEconInfo.item_skin = binaryReader.ReadInt32();
+                                unturnedEconInfo.item_effect = binaryReader.ReadInt32();
+                                unturnedEconInfo.quality = (UnturnedEconInfo.EQuality)binaryReader.ReadInt32();
+                                unturnedEconInfo.econ_type = binaryReader.ReadInt32();
+                                EconInfos.Add(unturnedEconInfo.itemdefid, unturnedEconInfo);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                UnturnedLog.exception(e, "Caught exception loading EconInfo.bin:");
+            }
         }
     }
 }

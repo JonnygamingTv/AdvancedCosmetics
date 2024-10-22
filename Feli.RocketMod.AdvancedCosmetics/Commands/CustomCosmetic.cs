@@ -23,13 +23,8 @@ namespace Feli.RocketMod.AdvancedCosmetics.Commands
             }
 
             var search = command[0];
-
-            var econInfoField = typeof(SDG.Provider.TempSteamworksEconomy).GetField("econInfo", BindingFlags.Static | BindingFlags.NonPublic);
-            var econInfos = econInfoField.GetValue(null) as Dictionary<int, UnturnedEconInfo>;
-
             UnturnedEconInfo cosmetic;
-
-            if (int.TryParse(search, out int searchId)) econInfos.TryGetValue(searchId, out cosmetic); else cosmetic = econInfos.Values.FirstOrDefault(x => x.name.ToLower().Contains(search.ToLower()));
+            if (int.TryParse(search, out int searchId)) Plugin.Instance.EconInfos.TryGetValue(searchId, out cosmetic); else cosmetic = Plugin.Instance.EconInfos.Values.FirstOrDefault(x => x.name.ToLower().Contains(search.ToLower()));
 
             if (cosmetic == null)
             {                
