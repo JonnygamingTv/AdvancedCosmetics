@@ -46,7 +46,7 @@ namespace Feli.RocketMod.AdvancedCosmetics.Models
 
         public void AddCosmetic(UnturnedEconInfo info)
         {
-            var type = info.type.ToLower();
+            var type = info.display_type.ToLower();
             if (type.Contains("backpack"))
             {
                 Backpack = info.itemdefid;

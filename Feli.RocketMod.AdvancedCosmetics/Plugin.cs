@@ -18,8 +18,8 @@ namespace Feli.RocketMod.AdvancedCosmetics
     {
         public static Plugin Instance { get; set; }
         public XMLFileAsset<PlayersCosmeticsStore> CosmeticsStore { get; set; }
-
-        public List<UnturnedEconInfo> EconInfos => TempSteamworksEconomy.econInfo;
+        System.Reflection.FieldInfo econInfoField = typeof(SDG.Provider.TempSteamworksEconomy).GetField("econInfo", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+        public Dictionary<int, UnturnedEconInfo> EconInfos => econInfoField.GetValue(null) as Dictionary<int, UnturnedEconInfo>;
         
         public override TranslationList DefaultTranslations => new TranslationList()
         {
