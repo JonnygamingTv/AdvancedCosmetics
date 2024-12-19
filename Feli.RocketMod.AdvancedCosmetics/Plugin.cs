@@ -79,27 +79,34 @@ namespace Feli.RocketMod.AdvancedCosmetics
                         using (BinaryReader binaryReader = new BinaryReader(fileStream))
                         {
                             int num0 = binaryReader.ReadInt32();
-                            int num = binaryReader.ReadInt32();
-                            for (int i = 0; i < num; i++)
+                            if (num0 <= 2)
                             {
-                                UnturnedEconInfo unturnedEconInfo = new UnturnedEconInfo();
-                                unturnedEconInfo.name = binaryReader.ReadString();
-                                unturnedEconInfo.display_type = binaryReader.ReadString();
-                                unturnedEconInfo.description = binaryReader.ReadString();
-                                unturnedEconInfo.name_color = binaryReader.ReadString();
-                                unturnedEconInfo.itemdefid = binaryReader.ReadInt32();
-                                unturnedEconInfo.marketable = binaryReader.ReadBoolean();
-                                unturnedEconInfo.scraps = binaryReader.ReadInt32();
-                                unturnedEconInfo.target_game_asset_guid = new Guid(binaryReader.ReadBytes(16));
-                                unturnedEconInfo.item_skin = binaryReader.ReadInt32();
-                                unturnedEconInfo.item_effect = binaryReader.ReadInt32();
-                                unturnedEconInfo.quality = (UnturnedEconInfo.EQuality)binaryReader.ReadInt32();
-                                unturnedEconInfo.econ_type = binaryReader.ReadInt32();
-                                if (num0 >= 2)
+                                int num = binaryReader.ReadInt32();
+                                for (int i = 0; i < num; i++)
                                 {
-                                    unturnedEconInfo.creationTimeUtc = DateTime.FromBinary(binaryReader.ReadInt64());
+                                    UnturnedEconInfo unturnedEconInfo = new UnturnedEconInfo();
+                                    unturnedEconInfo.name = binaryReader.ReadString();
+                                    unturnedEconInfo.display_type = binaryReader.ReadString();
+                                    unturnedEconInfo.description = binaryReader.ReadString();
+                                    unturnedEconInfo.name_color = binaryReader.ReadString();
+                                    unturnedEconInfo.itemdefid = binaryReader.ReadInt32();
+                                    unturnedEconInfo.marketable = binaryReader.ReadBoolean();
+                                    unturnedEconInfo.scraps = binaryReader.ReadInt32();
+                                    unturnedEconInfo.target_game_asset_guid = new Guid(binaryReader.ReadBytes(16));
+                                    unturnedEconInfo.item_skin = binaryReader.ReadInt32();
+                                    unturnedEconInfo.item_effect = binaryReader.ReadInt32();
+                                    unturnedEconInfo.quality = (UnturnedEconInfo.EQuality)binaryReader.ReadInt32();
+                                    unturnedEconInfo.econ_type = binaryReader.ReadInt32();
+                                    if (num0 >= 2)
+                                    {
+                                        unturnedEconInfo.creationTimeUtc = DateTime.FromBinary(binaryReader.ReadInt64());
+                                    }
+                                    EconInfos[unturnedEconInfo.itemdefid] = unturnedEconInfo;
                                 }
-                                EconInfos[unturnedEconInfo.itemdefid] = unturnedEconInfo;
+                            }
+                            else
+                            {
+                                UnturnedLog.warn(string.Format("Unable to load future EconInfo.bin version ({0})", num0));
                             }
                         }
                     }
