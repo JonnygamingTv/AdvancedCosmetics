@@ -78,7 +78,7 @@ namespace Feli.RocketMod.AdvancedCosmetics
                     {
                         using (BinaryReader binaryReader = new BinaryReader(fileStream))
                         {
-                            binaryReader.ReadInt32();
+                            int num0 = binaryReader.ReadInt32();
                             int num = binaryReader.ReadInt32();
                             for (int i = 0; i < num; i++)
                             {
@@ -95,7 +95,11 @@ namespace Feli.RocketMod.AdvancedCosmetics
                                 unturnedEconInfo.item_effect = binaryReader.ReadInt32();
                                 unturnedEconInfo.quality = (UnturnedEconInfo.EQuality)binaryReader.ReadInt32();
                                 unturnedEconInfo.econ_type = binaryReader.ReadInt32();
-                                EconInfos.Add(unturnedEconInfo.itemdefid, unturnedEconInfo);
+                                if (num0 >= 2)
+                                {
+                                    unturnedEconInfo.creationTimeUtc = DateTime.FromBinary(binaryReader.ReadInt64());
+                                }
+                                EconInfos[unturnedEconInfo.itemdefid] = unturnedEconInfo;
                             }
                         }
                     }
